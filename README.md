@@ -107,7 +107,7 @@ Logging is managed by Monolog. You can configure logging settings in the `config
 Use Composer to install the library:
 
 ```bash
-composer require www.gobuy.cheap/gobuy_php_encryption
+composer require www.gobuy.cheap/data_encryption
 ```
 
 ## Usage
