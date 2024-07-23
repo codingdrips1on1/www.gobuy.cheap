@@ -2052,5 +2052,9 @@ Main Contributors: [GoBuy.cheap](https://www.gobuy.cheap) and  [CodingDrips.eu](
 ____________
 You may proceed to get a copy [here](https://www.gobuy.cheap/integrated-web-and-mobile-development)
 ____________
-![Cryptograph - PHP](crypt.png)
 ![Integrated Web Dev.](web.png)
+____________
+____________
+Coming soon!
+____________
+![Cryptograph - PHP](crypt.png)
