@@ -1332,8 +1332,6 @@ class GoBuy extends GoBuyEncryption{
 This code sets up the necessary values and objects for a Diffie-Hellman key exchange within a Laravel Blade template, leveraging the custom `GoBuy` service and `DiffieHellman` encryption class.
 
 
-Sure, here is the provided HTML snippet explained in Markdown format:
-
 
 ### HTML Div Element for Diffie-Hellman Key Exchange Data
 
