@@ -1,6 +1,6 @@
 ## Table of Contents
 
-- [Cryptography - CMS with PKCS7 Encryption](#cryptography---cms-with-pkcs7-encryption)
+- [About app](#about-app)
   - [Features](#features)
   - [Requirements](#requirements)
   - [CMS Functionality](#cms-functionality)
@@ -13,8 +13,15 @@
   - [Choosing Between .pem, .crt, and .key extensions for data storage](#choosing-between-pem-crt-and-key-extensions-for-data-storage)
   - [Example of File Content:](#example-of-file-content)
   - [Best Practices](#best-practices)
-  - [Usage Scenario:](#usage-scenario)
-  - [Example:](#example)
+  - [Explanation of the `openssl.cnf` file Contents](#explanation-of-the-opensslcnf-file-contents)
+    - [\[req\] Section](#req-section)
+    - [Distinguished Name Section](#distinguished-name-section)
+    - [Attributes Section](#attributes-section)
+    - [X.509 Extensions Section](#x509-extensions-section)
+    - [\[req\_distinguished\_name\] Section](#req_distinguished_name-section)
+    - [\[req\_attributes\] Section](#req_attributes-section)
+    - [\[v3\_req\] Section](#v3_req-section)
+    - [\[alt\_names\] Section](#alt_names-section)
   - [Cascading intermediate certificate](#cascading-intermediate-certificate)
     - [output](#output)
     - [Types of Certificate Bundles](#types-of-certificate-bundles)
@@ -35,15 +42,6 @@
   - [Using PKCS7 System](#using-pkcs7-system)
   - [Alternative Certificate Generation](#alternative-certificate-generation)
   - [Use these for you convenience:](#use-these-for-you-convenience)
-  - [Explanation of the `openssl.cnf` file Contents](#explanation-of-the-opensslcnf-file-contents)
-    - [\[req\] Section](#req-section)
-    - [Distinguished Name Section](#distinguished-name-section)
-    - [Attributes Section](#attributes-section)
-    - [X.509 Extensions Section](#x509-extensions-section)
-    - [\[req\_distinguished\_name\] Section](#req_distinguished_name-section)
-    - [\[req\_attributes\] Section](#req_attributes-section)
-    - [\[v3\_req\] Section](#v3_req-section)
-    - [\[alt\_names\] Section](#alt_names-section)
     - [Explanation](#explanation)
 - [Diffie-Hellman](#diffie-hellman)
   - [Blade Template Code](#blade-template-code)
@@ -70,9 +68,17 @@
 - [Author](#author)
 - [Books for your information.](#books-for-your-information)
 
-# Cryptography - CMS with PKCS7 Encryption
+Encrypt with confidence, stay secure with our APIs. Your data's shield in transit - powered by our encryption. Protecting every bit, byte, and heartbeat of your data. Trust us to keep your secrets safe on the move. We offer the encryption you can rely on, security you can trust.
 
-In cryptography, **CMS** stands for **Cryptographic Message Syntax**. It is a standard defined by the Internet Engineering Task Force (IETF) for cryptographically protected messages. CMS can be used by cryptographic schemes and protocols to digitally sign, digest, authenticate, or encrypt any form of digital data. It is based on the syntax of PKCS #7, which itself is based on the Privacy-Enhanced Mail standard, and the latest version of CMS is specified in RFC 5652. CMS is widely used in various cryptographic standards, including S/MIME, PKCS #12, and the RFC 3161 digital timestamping protocol.
+
+
+# About app 
+
+Ensuring the safety of user data during transit is crucial in today's digital age, and our encryption APIs are designed to provide robust protection. By leveraging advanced encryption standards, we ensure that your data is transformed into a secure format that can only be decrypted by authorized parties. This not only protects the data from unauthorized access but also maintains its integrity throughout the transmission process. Users can count on our APIs to provide a seamless and secure encryption experience, making their applications more resilient against data breaches and cyber threats.
+
+Our encryption stages involve multiple layers of security to disguise data effectively. First, data is encrypted using strong algorithms, converting it into ciphertext that is unreadable without the correct decryption key. This process ensures that even if data is intercepted, it remains inaccessible to malicious actors. Additionally, our APIs support key management protocols that safeguard the encryption keys themselves, adding an extra layer of protection. By utilizing our comprehensive encryption stages, users can rest assured that their sensitive information is shielded from prying eyes at every step of its journey.
+
+We understand that the security of your applications is paramount, and our encryption APIs are designed with this in mind. From initial encryption to key management and final decryption, every stage is meticulously crafted to provide maximum security. Our solutions are continuously updated to adhere to the latest security standards and practices, ensuring that your data remains secure in an ever-evolving threat landscape. Trust in our encryption stages to keep your data safe, allowing you to focus on delivering exceptional experiences to your users without compromising on security.
 
 ## Features
 
@@ -154,16 +160,16 @@ For Laravel users, the root path `$this->getRoot()` stops in the directory where
 
 
 $root = $gobuy->getRoot( ); // You could proceed to generate your own path, if you choose not to use ours.
-$gobuy->create(sprintf( "%sapp/CMS", $root )); // This helper helps you create new folders.
+$gobuy->create( $folderName ); // This helper helps you create new folders only in the 'app' folder.
 $gobuy->checkAndCreateFile($root."app/CMS/data.txt"); // This helper helps you create a new folder, if it does not exist, and its file. Supply full path with the file name.
-$gobuy->setInputFilename($root."app/CMS/data.txt"); 
 
+$gobuy->folderExistsOrCreate( $root."/FOO" ); // Create folder if it does not exist.
 
 ```
 ## Cascading Encryption Stages
 We cascade encryption stages to strengthen your digital footprints, and secure your digital presence. This also makes it very hard for the man-in-the-middle or any other cryptoanalyst to figure out the key with one of the methods out there. If you desire more layers of encryption on the already existing encryption (which we recommend) then simply call the method `harden(...)`.
 ```php
-      $hardened = $gobuy->harden( $encryptedData, $aVeryStrongPassPhrase );
+      $hardened = $gobuy->harden( $data, $key );
 ```
 On the receiving side  call the method `ease()` to return back to working with `$encryptedData`. You can also use this to disguise passwords when signin up your users (very handy).
 ```php
@@ -196,14 +202,14 @@ Call the below method to undo the above. This is symetrical - meaning that both 
 Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. We understand the threats out there; which were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount`, `$key` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
 ```php
 
-    $cipher = $gobuy->cipher( "Hello, world!!!!", $itrCount,  $key, $padding ); // The last three arguments are optional
+    $cipher = $gobuy->cipher( "Hello, world!!!!", $strongKey, $itrCount, $padding ); // The last two arguments are optional
 
 ```
 On the receiving side just easily call the method `decipher()` to return back to working with `$encrypted`data.
 ```php
   //Blade
     @php
-      $deciphered = $gobuy->decipher( $cipher, $key, $padding ); // The last two are still optional.
+      $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last two are still optional.
     @endphp
 
 ```
@@ -297,42 +303,220 @@ $gobuy->setHeader([
 - Use `.crt` files for clarity when distributing public certificates.
 - Use `.key` files to securely store and manage private keys separately.
 
-In case you are new to this and don't know how to get a key and self-signed certificate for both the sender and receiver, follow the below prompt to quickly acquire them
-```cmd
-    $ openssl genpkey -algorithm RSA -out private_key.pem -aes256 
+In case you are new to this and don't know how to get a key and self-signed certificate for both the sender and receiver, follow the below to quickly acquire them:
+```php
+$out = $gobuy->createPrivateKey( sprintf( "%sapp/Output/private_key.pem", $root ) );
 ```
-Generate a Certificate Signing Request (CSR). With the private key, create a CSR which includes your public key and distinguished name:
-```cmd
-    $ openssl req -new -key private_key.pem -out csr.pem 
+Generates a private RSA key in PEM format and saves it to your `.pem` file. Returns the contents of the certificate.
+```php
+$out = $gobuy->createPublicKey( sprintf( "%sapp/Output/private_key.pem", $root ), 
+                sprintf( "%sapp/Output/public_key.pem", $root ) );
 ```
-The CSR contains information that will be included in the certificate, such as the organization name, common name (domain name), locality, country, and the public key that will be included in the certificate. In the context of OpenSSL and digital certificates, a CSR (Certificate Signing Request) is a block of encoded text that a user submits to a Certificate Authority (CA) to apply for a digital identity certificate. The CSR is typically generated on the server where the certificate will be installed, and it also includes a signature generated using the corresponding private key. 
-Generate a Self-Signed Certificate: Using the CSR, generate a self-signed certificate with the following command:
-```cmd
-    $ openssl req -x509 -sha256 -days 365 -key private_key.pem -in csr.pem -out certificate.pem 
+```php
+
 ```
-The command `openssl req -x509 -sha256 -days 365 -key private_key.pem -in csr.pem -out certificate.pem` is used to generate a self-signed X.509 certificate using OpenSSL. Breaking it further:
+Extracts the public key from the private key and saves it to your specified file.
+```php
+$out = $gobuy->createCSR( sprintf( "%spath/to//private_key.pem", $root ), 
+                sprintf( "%sapp/Output/crs.pem", $root ), 
+                sprintf( "%spath/to/openssl.cnf", $root ) );
+```
+Where `openssl.cnf` should look something like below: 
 
-- **openssl req**: This invokes the OpenSSL utility to process certificate requests.
-- **-x509**: This option specifies that the output should be a self-signed X.509 certificate instead of a certificate signing request (CSR).
-- **-sha256**: This specifies that the SHA-256 hash algorithm should be used to sign the certificate.
-- **-days 365**: This sets the validity period of the certificate to 365 days.
-- **-key private_key.pem**: This specifies the private key file to be used for signing the certificate.
-- **-in csr.pem**: This specifies the input CSR file that contains the details to be included in the certificate.
-- **-out certificate.pem**: This specifies the output file where the self-signed certificate will be written.
+```php
+[ req ]
+default_bits       = 2048
+default_md         = sha256
+default_keyfile    = private.pem
+prompt             = no
+encrypt_key        = no
 
-## Usage Scenario:
-This command is often used in testing environments or internal networks where a trusted CA is not necessary, and a self-signed certificate suffices for encryption and validation purposes.
+# distinguished_name section
+distinguished_name = req_distinguished_name
 
-## Example:
-To create a self-signed certificate valid for one year using an existing CSR and private key, you would run the command as shown. The resulting `certificate.pem` can then be used for SSL/TLS encryption in applications like web servers, ensuring secure communication.
+# attributes section
+attributes = req_attributes
 
+# x509 extensions section
+x509_extensions = v3_req
 
+[ req_distinguished_name ]
+countryName            = DE
+stateOrProvinceName    = Hessen
+localityName           = Frankfurt
+organizationName       = GoBuy
+organizationalUnitName = Tech Team
+commonName             = www.gobuy.cheap
+emailAddress           = info@gobuy.cheap
+
+[ req_attributes ]
+challengePassword              = A3D3GHP
+unstructuredName               = My Unstructured Name
+
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = example.com
+DNS.2 = www.example.com
+
+```
+## Explanation of the `openssl.cnf` file Contents
+### [req] Section
+
+```ini
+[ req ]
+```
+This section defines the settings for the OpenSSL "req" command, which is used to create certificate requests (CSRs).
+
+```ini
+default_bits       = 2048
+```
+This sets the default key size for the RSA key to 2048 bits. This is a good balance between security and performance.
+
+```ini
+default_md         = sha256
+```
+This sets the default message digest algorithm to SHA-256. SHA-256 is widely used and provides a good level of security.
+
+```ini
+default_keyfile    = private.pem
+```
+This specifies the default file name for the private key if one is not provided explicitly. In this case, the key will be named `private.pem`.
+
+```ini
+prompt             = no
+```
+This option tells OpenSSL not to prompt the user for the distinguished name fields. Instead, it will use the values specified in the configuration file.
+
+```ini
+encrypt_key        = no
+```
+This option specifies whether the private key should be encrypted. `no` means the private key will not be encrypted. Change to `yes` if you want to encrypt the private key.
+
+### Distinguished Name Section
+
+```ini
+distinguished_name = req_distinguished_name
+```
+This specifies the section in the configuration file that contains the distinguished name fields. It refers to the `[req_distinguished_name]` section.
+
+### Attributes Section
+
+```ini
+attributes = req_attributes
+```
+This specifies the section in the configuration file that contains optional attributes. It refers to the `[req_attributes]` section.
+
+### X.509 Extensions Section
+
+```ini
+x509_extensions = v3_req
+```
+This specifies the section in the configuration file that contains X.509 v3 extensions. It refers to the `[v3_req]` section.
+
+### [req_distinguished_name] Section
+
+```ini
+[ req_distinguished_name ]
+```
+This section defines the fields for the distinguished name (DN) that will be included in the certificate request.
+
+```ini
+countryName            = DE
+```
+The country code, which is a two-letter ISO country code. For example, `DE` for the United States.
+
+```ini
+stateOrProvinceName    = Hessen
+```
+The full name of the state or province.
+
+```ini
+localityName           = Frankfurt
+```
+The name of the city or locality.
+
+```ini
+organizationName       = GoBuy
+```
+The legal name of the organization.
+
+```ini
+organizationalUnitName = Tech Team
+```
+The name of the organizational unit or department within the organization.
+
+```ini
+commonName             = www.gobuy.cheap
+```
+The common name (CN), typically the fully qualified domain name (FQDN) of the server or user.
+
+```ini
+emailAddress           = info@gobuy.cheap
+```
+The email address associated with the certificate request.
+
+### [req_attributes] Section
+
+```ini
+[ req_attributes ]
+```
+This section defines optional attributes that can be included in the certificate request.
+
+```ini
+challengePassword              = A3D3GHP
+```
+An optional challenge password that can be used to authenticate certificate revocation requests.
+
+```ini
+unstructuredName               = My Unstructured Name
+```
+An optional unstructured name that can be used for additional information.
+
+### [v3_req] Section
+
+```ini
+[ v3_req ]
+```
+This section defines the X.509 v3 extensions that can be included in the certificate request.
+
+```ini
+subjectAltName = @alt_names
+```
+This specifies that the subject alternative names (SANs) should be included in the certificate. It refers to the `[alt_names]` section.
+
+### [alt_names] Section
+
+```ini
+[ alt_names ]
+```
+This section defines the subject alternative names (SANs) that can be included in the certificate.
+
+```ini
+DNS.1 = example.com
+```
+This specifies the first SAN, which is a DNS name. Here, it is set to `example.com`.
+
+```ini
+DNS.2 = www.example.com
+```
+This specifies the second SAN, which is a DNS name. Here, it is set to `www.example.com`.
+
+The `openssl.cnf` file is used to configure various aspects of creating a certificate request. The `[req]` section sets general options for the request, such as key size, message digest, and file names. The `[req_distinguished_name]` section specifies the fields for the distinguished name, while the `[req_attributes]` section allows for optional attributes. The `[v3_req]` section is used to include X.509 v3 extensions, such as subject alternative names, which are defined in the `[alt_names]` section. This configuration ensures that the CSR contains all the necessary information in a standardized format.
+
+```php
+$out = $gobuy->generateSelfSignedCert( sprintf( "%sapp/Output/private_key.pem", $root ), 
+            sprintf( "%sapp/Output/root_cert.pem", $root ), 
+                sprintf( "%sapp/Output/openssl.cnf", $root ), $days );
+```
+Generate self-signed certificate with the above API.
 
 We are securing you with chain of trust. So we generate an intermediate certificate for the `$untrusted_certificates_filename`. This is typically done to provide additional layer of security and also more certificates that will be needed to complete the verification stage.
 ```php
-list( $caCert, $caKey, $csr ) = $gobuy->generateCACertAndPrivateKey( $certPath,  $keyPath,  $csrPath); // Self-signed CA certificate needed to sign the intermediates.
+list( $caCert, $caKey, $csr ) = $gobuy->generateCACertAndPrivateKey( $certOutPath,  $keyOutPath,  $csrOutPath); // Self-signed CA certificate needed to sign the intermediates.
 ```
-You ma find this CA certificat in a `CA` folder in your outer structure.
+You may find this CA certificat in a `CA` folder in your outer structure.
 ```php
 $dn= array( [
                 'countryName' => 'AU',
@@ -367,7 +551,7 @@ With the above two methods, you get the last intermediate certificate in the bun
 $days = 365; // How long the certificate will be valid. You can increase this further
 $serial = rand(); // The serial number of issued certificate. If not specified it will default to 0. 
 $gobuy->endEntityCertPath = $gobuy->root."app/endEntityCert.pem"; // endEntity is same as sender
-list( $endEntityCert, $endEntityCertPath ) = $gobuy->signEndEntityCert( "path/to/store/end_entity/csr.pem", 
+list( $endEntityCert, $endEntityCertPath ) = $gobuy->signEndEntityCert( "path/to/stored/end_entity/csr.pem", 
                                 $intermediatCert, $intermediatePrivateKey, 
                                   $days, $serial );
 
@@ -646,7 +830,7 @@ In summary, these headers are crucial for ensuring the proper handling of S/MIME
 We will effortlessly pad your encrypted data. This stage is well recommended to give you more complex structure and randomness. This is to make the encrypted more resistant to brute force attack, and other attacks that exploit the simplicity of cryptographic cipher texts. 
 
 ```php
-echo $gobuy->paddCMSEncrypted(); // Pad the encrypted data before sending (recommended)
+$padded = $gobuy->paddCMSEncrypted( $strongKey ); // Pad the encrypted data before sending (recommended)
 ```
 
 ```php
@@ -654,7 +838,7 @@ echo $gobuy->paddCMSEncrypted(); // Pad the encrypted data before sending (recom
 @inject('gobuy', 'App\Services\GoBuy')
 // Blade 
 @php
-    $gobuy->unPadCMSEncrypted(); // unpad the padded encrypted data before the decryption stage.
+    $gobuy->unPadCMSEncrypted( $padded, $strongKey ); // unpad the padded encrypted data before the decryption stage.
 @endphp
 ```
 Where GoBuy Service class is as below:
@@ -718,7 +902,7 @@ For Laravel users, the client side may look something like below. Now remember t
 <body class="antialiased">
 @inject('gobuy', 'App\Services\GoBuy')
 
-<!-- {{ $gobuy->getCMSSignedData() }} -->
+
 @php
         
 
@@ -732,14 +916,14 @@ $gobuy->cmsDecrypt($gobuy->getRoot()."app/data/encrypted_data.cms");
 
 // Here is where the CA certificate is added to the caInfo array.
 $gobuy->caInfo = [
-            'file' => 'b8218ee6c6064ec03d4129cf4d72f12ab3f07c3b5dccdf0f1e019ae02297bc18.0', // CA certificate file name
+            'file' => $root.'path/t/hashed/b8218ee6c6064ec03d4129cf4d72f12ab3f07c3b5dccdf0f1e019ae02297bc18.0', // CA certificate file name
             'dir' => 'path/to/hashed/CA/certificate/files/' // Path to a directory containing the CA certificates specified as "file" in this array above
         ];
 
-        
+// set $flag = PKCS7_NOVERIFY to skip CA verification otherwise set it to 0. Integer value.
 if ($gobuy->cmsVerify ( $gobuy->getDecryptedData(), 
                     $gobuy->getRoot()."app/where/to/store/cms_content_data.pem", // Where the original message will be stored after it is detached from the signature.
-                    $gobuy->getRoot()."app/where/to/store/cms_signature_data.pem" )) // Where the signature is stored after it is ditached from the original message.
+                    $gobuy->getRoot()."app/where/to/store/cms_signature_data.pem", $flag ) ) // Where the signature is stored after it is ditached from the original message.
 {
     $gobuy->output( "CMS VERIfied", "Verified!!" );
 } else {
@@ -754,12 +938,12 @@ if ($gobuy->cmsVerify ( $gobuy->getDecryptedData(),
 Remember: the directory containing CA certificates does not always need to be hashed, like in `$gobuy->caInfo` above. However, using a hashed directory structure can optimize lookup and verification processes, particularly when dealing with a large number of CA certificates. There are specific ways to hash these files, so we recommend those ways or using our `hashCa` API provided.
 
 ```php
-$gobuy->hashCA( $root."path/to/ca.crt", $root."path/to/save/hashed/CA/" );
+$gobuy->hashCA( $root."path/to/CA/", $root."path/to/save/hashed/CA/" );
 ```
 Above returns an array of your hashed CAs with their original file names as key.
 ```php
-$gobuy->caInfo = $gobuy->prepareCAInfo( $root.'CMS/hashed' ); // Generate array of the CA certificate and the dir name.
-$gobuy->caInfo = $gobuy->prepareCAInfoFromHashed( $root.'path' ); // Generate array of the hashed CA certificate and the dir name from the hashed directory
+$gobuy->caInfo = $gobuy->prepareCAInfo( $root.'app/path/to/CA' ); // Generate array of the CA certificate and the dir name.
+$gobuy->caInfo = $gobuy->prepareCAInfoFromHashed( $root.'path/to/hashed/CA' ); // Generate array of the hashed CA certificate and the dir name from the hashed directory
 ```
 You could use our API to help prepare your caInfo with ease. Unless you have your own method. Please do not add the contents of the CA certificate directly into the `ca_info` array. It most times ends up in failure.
 
@@ -913,213 +1097,7 @@ $same = $gobuy->checkIfCertKeyMatch( "path/to/certificate.pem", "path/to/private
 Check that the certificate and key files correspond to the same entity. You can verify this with the above API. Returns `true` if it is a match otherwise `false`.
 
 ## Use these for you convenience:
-```php
-$out = $gobuy->createPrivateKey( sprintf( "%sapp/Output/private_key.pem", $root ) );
-```
-Generates a private RSA key in PEM format and saves it to your `.pem` file. Returns the contents of the certificate.
-```php
-$out = $gobuy->createPublicKey( sprintf( "%sapp/Output/private_key.pem", $root ), 
-                sprintf( "%sapp/Output/public_key.pem", $root ) );
-```
-```php
 
-```
-Extracts the public key from the private key and saves it to your specified file.
-```php
-$out = $gobuy->createCSR( sprintf( "%sapp/Output/private_key.pem", $root ), 
-                sprintf( "%sapp/Output/crs.pem", $root ), 
-                sprintf( "%sapp/Output/openssl.cnf", $root ) );
-```
-Where `openssl.cnf` should look something like below: 
-
-```php
-[ req ]
-default_bits       = 2048
-default_md         = sha256
-default_keyfile    = private.pem
-prompt             = no
-encrypt_key        = no
-
-# distinguished_name section
-distinguished_name = req_distinguished_name
-
-# attributes section
-attributes = req_attributes
-
-# x509 extensions section
-x509_extensions = v3_req
-
-[ req_distinguished_name ]
-countryName            = DE
-stateOrProvinceName    = Hessen
-localityName           = Frankfurt
-organizationName       = GoBuy
-organizationalUnitName = Tech Team
-commonName             = www.gobuy.cheap
-emailAddress           = info@gobuy.cheap
-
-[ req_attributes ]
-challengePassword              = A3D3GHP
-unstructuredName               = My Unstructured Name
-
-[ v3_req ]
-subjectAltName = @alt_names
-
-[ alt_names ]
-DNS.1 = example.com
-DNS.2 = www.example.com
-
-```
-## Explanation of the `openssl.cnf` file Contents
-### [req] Section
-
-```ini
-[ req ]
-```
-This section defines the settings for the OpenSSL "req" command, which is used to create certificate requests (CSRs).
-
-```ini
-default_bits       = 2048
-```
-This sets the default key size for the RSA key to 2048 bits. This is a good balance between security and performance.
-
-```ini
-default_md         = sha256
-```
-This sets the default message digest algorithm to SHA-256. SHA-256 is widely used and provides a good level of security.
-
-```ini
-default_keyfile    = private.pem
-```
-This specifies the default file name for the private key if one is not provided explicitly. In this case, the key will be named `private.pem`.
-
-```ini
-prompt             = no
-```
-This option tells OpenSSL not to prompt the user for the distinguished name fields. Instead, it will use the values specified in the configuration file.
-
-```ini
-encrypt_key        = no
-```
-This option specifies whether the private key should be encrypted. `no` means the private key will not be encrypted. Change to `yes` if you want to encrypt the private key.
-
-### Distinguished Name Section
-
-```ini
-distinguished_name = req_distinguished_name
-```
-This specifies the section in the configuration file that contains the distinguished name fields. It refers to the `[req_distinguished_name]` section.
-
-### Attributes Section
-
-```ini
-attributes = req_attributes
-```
-This specifies the section in the configuration file that contains optional attributes. It refers to the `[req_attributes]` section.
-
-### X.509 Extensions Section
-
-```ini
-x509_extensions = v3_req
-```
-This specifies the section in the configuration file that contains X.509 v3 extensions. It refers to the `[v3_req]` section.
-
-### [req_distinguished_name] Section
-
-```ini
-[ req_distinguished_name ]
-```
-This section defines the fields for the distinguished name (DN) that will be included in the certificate request.
-
-```ini
-countryName            = DE
-```
-The country code, which is a two-letter ISO country code. For example, `DE` for the United States.
-
-```ini
-stateOrProvinceName    = Hessen
-```
-The full name of the state or province.
-
-```ini
-localityName           = Frankfurt
-```
-The name of the city or locality.
-
-```ini
-organizationName       = GoBuy
-```
-The legal name of the organization.
-
-```ini
-organizationalUnitName = Tech Team
-```
-The name of the organizational unit or department within the organization.
-
-```ini
-commonName             = www.gobuy.cheap
-```
-The common name (CN), typically the fully qualified domain name (FQDN) of the server or user.
-
-```ini
-emailAddress           = info@gobuy.cheap
-```
-The email address associated with the certificate request.
-
-### [req_attributes] Section
-
-```ini
-[ req_attributes ]
-```
-This section defines optional attributes that can be included in the certificate request.
-
-```ini
-challengePassword              = A3D3GHP
-```
-An optional challenge password that can be used to authenticate certificate revocation requests.
-
-```ini
-unstructuredName               = My Unstructured Name
-```
-An optional unstructured name that can be used for additional information.
-
-### [v3_req] Section
-
-```ini
-[ v3_req ]
-```
-This section defines the X.509 v3 extensions that can be included in the certificate request.
-
-```ini
-subjectAltName = @alt_names
-```
-This specifies that the subject alternative names (SANs) should be included in the certificate. It refers to the `[alt_names]` section.
-
-### [alt_names] Section
-
-```ini
-[ alt_names ]
-```
-This section defines the subject alternative names (SANs) that can be included in the certificate.
-
-```ini
-DNS.1 = example.com
-```
-This specifies the first SAN, which is a DNS name. Here, it is set to `example.com`.
-
-```ini
-DNS.2 = www.example.com
-```
-This specifies the second SAN, which is a DNS name. Here, it is set to `www.example.com`.
-
-The `openssl.cnf` file is used to configure various aspects of creating a certificate request. The `[req]` section sets general options for the request, such as key size, message digest, and file names. The `[req_distinguished_name]` section specifies the fields for the distinguished name, while the `[req_attributes]` section allows for optional attributes. The `[v3_req]` section is used to include X.509 v3 extensions, such as subject alternative names, which are defined in the `[alt_names]` section. This configuration ensures that the CSR contains all the necessary information in a standardized format.
-
-```php
-$out = $gobuy->generateSelfSignedCert( sprintf( "%sapp/Output/private_key.pem", $root ), 
-            sprintf( "%sapp/Output/root_cert.pem", $root ), 
-                sprintf( "%sapp/Output/openssl.cnf", $root ), $days );
-```
-Generate self-signed certificate with the above API.
 ```php
 $gobuy->viewCertificate( sprintf( "%sapp/Output/root_cert.pem", $root ) )
 ```
