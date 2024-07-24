@@ -1050,14 +1050,14 @@ Here's an example of how to invoke these methods:
 ```php
       ...
 
-    list( $senderRawCert, $senderPrivateKey ) = $gobuy->generateSenderCredentials( $config, $dn, $expiresIn  )
+    list( $senderRawCert, $senderPrivateKey ) = $gobuy->generateSenderCredentials( $config, $dn, $expiresIn  );
            
     
 ```
 In most cases, the receiver is the server that will decrypt and authenticate user data.
 ```php
   @php
-    list( $recipientRawCert, $recipientPrivateKey ) = $gobuy->generateRecipientCredentials( $config, $dn, $expiresIn  )
+    list( $recipientRawCert, $recipientPrivateKey ) = $gobuy->generateRecipientCredentials( $config, $dn, $expiresIn  );
   @endphp
 ```
 ```php 
@@ -1086,6 +1086,7 @@ When using these methods, you don't need to worry about file paths or handling c
 
 These methods are designed to be flexible, allowing you to specify different configurations and distinguished names for the sender and recipient. The `$config` array allows you to define the cryptographic parameters for the certificate and private key generation, while the `$dn` array contains the information that will be included in the subject field of the certificate. The `$expiresIn` parameter sets the validity period of the certificate in days. These methods abstract away the complexity of generating and managing cryptographic credentials, making it easier to implement secure communication in your application.
 
+For a quicker CMS encryption, consider the below:
 ```php
 $encrypted = $gobuy->encryptCMS( "path/to/data.txt", "path/to/save/encrypted_data.cms", "path/to/save/user_certificate.pem" );
 ```
