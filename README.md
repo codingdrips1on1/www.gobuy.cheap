@@ -182,11 +182,11 @@ On the receiving side  call the method `ease()` to return back to working with `
 ```
 After hashing a password, simply call this method to help disfigure the password more, making it harder for any cryptoanalyst who may be on your output. This is symetrical - meaning that both you and the client need the same key.
 ```php
-  $damagedPassword = $gobuy->damageThis( $password, $key );
+  $damagedPassword = $gobuy->damageThis( $password, $strongKey );
 ```
 Call the below method to reverse this. This is symetrical - meaning that both you and the client need the same key.
 ```php
-  $gobuy->restore( $damagedPassword, $key );
+  $gobuy->restore( $damagedPassword, $strongKey );
 ```
 Call the veil on your passwords, messages, or data, in general, for a much stronger disguise. 
 ```php
@@ -194,7 +194,7 @@ Call the veil on your passwords, messages, or data, in general, for a much stron
 ```
 Call the below method to undo the above. This is symetrical - meaning that both you and the client need the same key.
 ```php
-    $originalData = $gobuy->unveil( $veiled, $key );
+    $originalData = $gobuy->unveil( $veiled, $strongKey );
 ```
 Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. We understand the threats out there; which were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount`, `$key` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
 ```php
@@ -1238,22 +1238,6 @@ IHBlcnNvbmFsDQogIFNuYXBjaGF0IGFjY291bnQsIHBsZWFzZSByZWFjaCBvdXQg
 dG8gU25hcGNoYXQgU3VwcG9ydCBoZXJlLg==
 ```
 
-```php
-<?php
-try {
- 
-    // Base64 encode file
-    base64EncodeFile('plaintext.txt', 'encoded.txt');
-    echo "File Base64 encoded successfully.\n";
-    
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
-
-?>
-
-
-```
 
 # Diffie-Hellman
 In our encryption class, we firmly believe in incorporating the Diffie-Hellman authentication stage as a crucial step before decryption begins or generation of keys from the secret for other tasks. This authentication process, which involves you and your users, plays a vital role in ensuring the security and integrity of the encrypted communication. Here's why we consider it necessary:
