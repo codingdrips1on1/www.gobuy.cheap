@@ -1982,7 +1982,7 @@ $crlFile = $gobuy->fetchCRL(  "path/to/where/you/will/store/crl_file.crl" );
 
 # Exception Handling
 
-The CMS Signer throws exceptions if there are issues with file signing. Make sure to handle these exceptions in your application.
+The library throws exceptions if there are issues with file encryption. Make sure to handle these exceptions in your application.
 
 # Initial Work
 
