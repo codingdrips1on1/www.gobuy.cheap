@@ -72,7 +72,7 @@ Encrypt with confidence, stay secure with our APIs. Your data's shield in transi
 
 
 
-# About app 
+# About Library
 
 Ensuring the safety of user data during transit is crucial in today's digital age, and our encryption APIs are designed to provide robust protection. By leveraging advanced encryption standards, we ensure that your data is transformed into a secure format that can only be decrypted by authorized parties. This not only protects the data from unauthorized access but also maintains its integrity throughout the transmission process. Users can count on our APIs to provide a seamless and secure encryption experience, making their applications more resilient against data breaches and cyber threats.
 
