@@ -84,6 +84,7 @@ We understand that the security of your applications is paramount, and our encry
 
 - **Easy-to-use CMS**: Manage your content efficiently with our user-friendly CMS.
 - **PKCS7 Encryption**: Secure your data with advanced PKCS7 signing, encrypting, decrypting, and signature-verifying capabilities.
+- **Diffie-Hellman's**: Secured using DH's key-exchange mechanism.
 - **Built-in Logging**: Comprehensive logging provided by Monolog.
 - **Exception Handling**: Robust error management to ensure smooth operation.
 
@@ -155,7 +156,7 @@ You may also decide to log your output in a different location. Then try the bel
                 ->thenSetPath( $root."app/log.log" );
     $gobuy->log->info('The file has been successfully created.');
 ```
-For Laravel users, the root path `$this->getRoot()` stops in the directory where the laravel `app` folder and `vendor` are. The App folder and the vendor are to be in the same directory for this class method to serve properly. If you dont use it, then files are vexpected to be in the `public` folder. To use, you can say:
+For Laravel users, the root path `$this->getRoot()` stops in the directory where the laravel `app` folder and `vendor` are. The App folder and the vendor are to be in the same directory for this class method to serve properly. If you dont use it, then files are expected to be in the `public` folder. To use, you can say:
 ```php
 
 
@@ -169,23 +170,19 @@ $gobuy->folderExistsOrCreate( $root."/FOO" ); // Create folder if it does not ex
 ## Cascading Encryption Stages
 We cascade encryption stages to strengthen your digital footprints, and secure your digital presence. This also makes it very hard for the man-in-the-middle or any other cryptoanalyst to figure out the key with one of the methods out there. If you desire more layers of encryption on the already existing encryption (which we recommend) then simply call the method `harden(...)`.
 ```php
-      $hardened = $gobuy->harden( $data, $key );
+      $hardened = $gobuy->harden( $data, $strongKey );
 ```
 On the receiving side  call the method `ease()` to return back to working with `$encryptedData`. You can also use this to disguise passwords when signin up your users (very handy).
 ```php
     @inject('gobuy', 'App\Services\GoBuy')
   //Blade
     @php
-      $encryptedData = $gobuy->ease( $hardened, $key );
+      $encryptedData = $gobuy->ease( $hardened, $strongKey );
     @endphp
 ```
 After hashing a password, simply call this method to help disfigure the password more, making it harder for any cryptoanalyst who may be on your output. This is symetrical - meaning that both you and the client need the same key.
 ```php
   $damagedPassword = $gobuy->damageThis( $password, $key );
-```
-The output if you damaged "Hello, world!" would look like below:
-```php
-!dlrow ,olleH:#?/,olleH/!dlrow ,ol
 ```
 Call the below method to reverse this. This is symetrical - meaning that both you and the client need the same key.
 ```php
@@ -1100,7 +1097,7 @@ Check that the certificate and key files correspond to the same entity. You can 
 ## Use these for you convenience:
 
 ```php
-$gobuy->viewCertificate( sprintf( "%sapp/Output/root_cert.pem", $root ) )
+$gobuy->viewCertificate( sprintf( "%sapp/Output/root_cert.pem", $root ) );
 ```
 The above will return something like below; 
 
@@ -1120,7 +1117,7 @@ Convert DER to PEM.
 echo $gobuy->verifyCertWithCA( sprintf( "%sCA/ca.crt", $root ),
                                          sprintf( "%sapp/CMS/concatenated_cert.pem", $root ) );
 ```
-Returns the below if 'OK', otherwise throws an error. Where `concatenated_cert.pem` is the file holding the cascaded intermediate files generated from the API [cascadeUntrustedCertificate](#cascading-intermediate-certificate). We recommend you play around with this API and see which certificate fails and which doesn't with you specified CA certificate.
+Returns the below if 'OK', otherwise throws an error. Where `concatenated_cert.pem` is the file holding the cascaded intermediate files generated from the API [cascadeUntrustedCertificate](#cascading-intermediate-certificate). We recommend you play around with this API and see which certificate fails and which doesn't with your specified CA certificate.
 ```bash
 C:\xampp\htdocs\...\app/CMS/concatenated_cert.pem: OK
 ```
@@ -1259,7 +1256,7 @@ try {
 ```
 
 # Diffie-Hellman
-In our encryption class, we firmly believe in incorporating the Diffie-Hellman authentication stage as a crucial step before decryption begins or generation of keys from the secret. This authentication process, which involves you and your users, plays a vital role in ensuring the security and integrity of the encrypted communication. Here's why we consider it necessary:
+In our encryption class, we firmly believe in incorporating the Diffie-Hellman authentication stage as a crucial step before decryption begins or generation of keys from the secret for other tasks. This authentication process, which involves you and your users, plays a vital role in ensuring the security and integrity of the encrypted communication. Here's why we consider it necessary:
 1. **Mutual Authentication**:
 With Diffie-Hellman authentication stage we facilitate mutual authentication between you and your users. By verifying each other's identities, you can establish trust and confidence before proceeding with the decryption process or generation of keys from the shared secret. This mutual authentication helps prevent unauthorized access and protects against man-in-the-middle attacks. Refer to our book on "Encryption" to learn more on this kind of attack, where we discussed it with the sufficient examples.
 
