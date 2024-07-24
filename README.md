@@ -1785,7 +1785,7 @@ For the `$serverSharedSecret`, you should get:
 7480603217065611487812391300266927278132489371633944691283404075838398607516532"}
 
 ```
-If e verything goes well, you should have a secret.
+If verything goes well, you should have a secret.
 ```php
 if ( $clientShareSecret === $serverSharedSecret ) {
     // Use secret here.
