@@ -137,7 +137,7 @@ For Laravel users. You have to inject our object as parameter in your method to 
 protected $gobuy;
 public function index( Request $req, GoBuyEncryption $gobuy ) {
 
-        $this->gobuy = $gobuy;
+ $this->gobuy = $gobuy;
 
 }  
 ```
@@ -152,9 +152,9 @@ $gobuy->log->warning('Foo');
 ```
 You may also decide to log your output in a different location. Then try the below solution:
 ```php
-    $gobuy->initLogger( "ERR_NAME" )
-                ->thenSetPath( $root."app/log.log" );
-    $gobuy->log->info('The file has been successfully created.');
+$gobuy->initLogger( "ERR_NAME" )
+            ->thenSetPath( $root."app/log.log" );
+$gobuy->log->info('The file has been successfully created.');
 ```
 For Laravel users, the root path `$this->getRoot()` stops in the directory where the laravel `app` folder and `vendor` are. The App folder and the vendor are to be in the same directory for this class method to serve properly. If you dont use it, then files are expected to be in the `public` folder. To use, you can say:
 ```php
@@ -170,58 +170,58 @@ $gobuy->folderExistsOrCreate( $root."/FOO" ); // Create folder if it does not ex
 ## Cascading Encryption Stages
 We cascade encryption stages to strengthen your digital footprints, and secure your digital presence. This also makes it very hard for the man-in-the-middle or any other cryptoanalyst to figure out the key with one of the methods out there. If you desire more layers of encryption on the already existing encryption (which we recommend) then simply call the method `harden(...)`.
 ```php
-      $hardened = $gobuy->harden( $data, $strongKey );
+$hardened = $gobuy->harden( $data, $strongKey );
 ```
 On the receiving side  call the method `ease()` to return back to working with `$encryptedData`. You can also use this to disguise passwords when signin up your users (very handy).
 ```php
-    @inject('gobuy', 'App\Services\GoBuy')
-  //Blade
-    @php
-      $encryptedData = $gobuy->ease( $hardened, $strongKey );
-    @endphp
+@inject('gobuy', 'App\Services\GoBuy')
+//Blade
+@php
+    $encryptedData = $gobuy->ease( $hardened, $strongKey );
+@endphp
 ```
 After hashing a password, simply call this method to help disfigure the password more, making it harder for any cryptoanalyst who may be on your output. This is symetrical - meaning that both you and the client need the same key.
 ```php
-  $damagedPassword = $gobuy->damageThis( $password, $strongKey );
+$damagedPassword = $gobuy->damageThis( $password, $strongKey );
 ```
 Call the below method to reverse this. This is symetrical - meaning that both you and the client need the same key.
 ```php
-  $gobuy->restore( $damagedPassword, $strongKey );
+$gobuy->restore( $damagedPassword, $strongKey );
 ```
 Call the veil on your passwords, messages, or data, in general, for a much stronger disguise. 
 ```php
-    $veiled = $gobuy->veil( "abcdefghijklmnopqrstuvwxyz0123456789", $key );
+$veiled = $gobuy->veil( "abcdefghijklmnopqrstuvwxyz0123456789", $key );
 ```
 Call the below method to undo the above. This is symetrical - meaning that both you and the client need the same key.
 ```php
-    $originalData = $gobuy->unveil( $veiled, $strongKey );
+$originalData = $gobuy->unveil( $veiled, $strongKey );
 ```
 Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. We understand the threats out there; which were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount`, `$key` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
 ```php
 
-    $cipher = $gobuy->cipher( "Hello, world!!!!", $strongKey, $itrCount, $padding ); // The last two arguments are optional
+$cipher = $gobuy->cipher( "Hello, world!!!!", $strongKey, $itrCount, $padding ); // The last two arguments are optional
 
 ```
 On the receiving side just easily call the method `decipher()` to return back to working with `$encrypted`data.
 ```php
   //Blade
-    @php
-      $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last two are still optional.
-    @endphp
+@php
+    $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last two are still optional.
+@endphp
 
 ```
 Use the below to return an array list of all the available encryption methods in OpenSSL. 
 ```php
   //Blade
-    @php
-       $gobuy->getEncMethods(  );
-    @endphp
+@php
+    $gobuy->getEncMethods(  );
+@endphp
 
 ```
 
 Before we go into the advanced stuff, remember this method, which helps you quickly generate a pair of private and public keys in PEM format. The method returns an array of the keys. The first item is the private key, while the second is the public key.
 ```php
-   list( $privateKey, $publicKey ) = $gobuy->genKeyPair();
+list( $privateKey, $publicKey ) = $gobuy->genKeyPair();
 ```
 
 
@@ -1209,7 +1209,7 @@ $gobuy->signCSRWithCA(sprintf( "%sapp/CMS/csr.pem", $root ),
 
 }
 ```
-With the above you can easily creeate a new PEM certificate, signed with a CA certificate you need to specify.
+With the above you can easily creeate a new PEM certificate, signed with a CA certificate you need to specify. If you do not have all the CA credentials required above, expand our pack in vendor `www.gobuy.cheap` and locate a `CA` folder we left for you. We hope it would be easier from there. You could also use our APIs to generate the required credentials.
 
 ```php
 echo $gobuy->checkPrivateKey( sprintf( "%sapp/Output/private_key.pem", $root ) );
