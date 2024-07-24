@@ -2029,7 +2029,7 @@ Main Contributors: [GoBuy.cheap](https://www.gobuy.cheap) and  [CodingDrips.eu](
 
 # Books for your information.
 ____________
-You may proceed to get a copy [here](https://www.gobuy.cheap/integrated-web-and-mobile-development)
+You may proceed to get a copy [here](https://www.gobuy.cheap/developer-blog)
 ____________
 ![Integrated Web Dev.](web.png)
 ____________
