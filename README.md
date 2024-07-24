@@ -1988,7 +1988,7 @@ The CMS Signer throws exceptions if there are issues with file signing. Make sur
 
 The CMS Signer Library was created to provide developers with an easy-to-use solution for signing files using Cryptographic Message Syntax (CMS). It simplifies the process of ensuring data integrity and authenticity in PHP applications. The initial release includes core signing features, comprehensive error handling, and integration with Monolog for logging.
 
-
+In addition, we have integrated Diffie-Hellman's key-exchange mechanism, PKCS7 encryption and decryption, chain of trust, and other APIs. These additions make the library a robust tool for developers, enhancing security and streamlining encryption processes in their projects.
 # Contributing
 
 Contributions are welcome. Please submit pull requests to the repository.
