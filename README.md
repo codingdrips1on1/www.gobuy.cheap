@@ -196,7 +196,7 @@ Call the below method to undo the above. This is symetrical - meaning that both 
 ```php
 $originalData = $gobuy->unveil( $veiled, $strongKey );
 ```
-Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. The threats out there were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount`, `$key` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
+Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. The threats out there were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
 ```php
 
 $cipher = $gobuy->cipher( "Hello, world!!!!", $strongKey, $itrCount, $padding ); // The last two arguments are optional
@@ -206,7 +206,7 @@ On the receiving side just easily call the method `decipher()` to return back to
 ```php
   //Blade
 @php
-    $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last two are still optional.
+    $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last argument is optional.
 @endphp
 
 ```
