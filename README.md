@@ -553,7 +553,7 @@ list( $endEntityCert, $endEntityCertPath ) = $gobuy->signEndEntityCert( "path/to
                                   $days, $serial );
 
 ```
-For end entity's CSR, you may use the sender's CSR from the prompt above. The sender certificate will look something like below. This is a PEM format.
+For end entity's CSR, you may use the sender's CSR generated above. The sender certificate will look something like below. This is a PEM format.
 ```vbnet
 -----BEGIN CERTIFICATE-----
 MIID1DCCArygAwIBAgIEBiKpijANBgkqhkiG9w0BAQsFADCBnDELMAkGA1UEBhMC
