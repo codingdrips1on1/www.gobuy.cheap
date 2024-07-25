@@ -1,6 +1,6 @@
 ## Table of Contents
 
-- [About app](#about-app)
+- [About Library](#about-library)
   - [Features](#features)
   - [Requirements](#requirements)
   - [CMS Functionality](#cms-functionality)
@@ -58,6 +58,8 @@
   - [Key Derivation](#key-derivation)
   - [Forward Secrecy](#forward-secrecy)
   - [Secure Authentication](#secure-authentication)
+- [Elliptic-Curve Diffie-Hellman (ECDH)](#elliptic-curve-diffie-hellman-ecdh)
+    - [Additional Details:](#additional-details)
 - [Certificate Info](#certificate-info)
 - [Fetching a Certificate Revocation List (CRL)](#fetching-a-certificate-revocation-list-crl)
 - [Exception Handling](#exception-handling)
@@ -85,6 +87,7 @@ We understand that the security of your applications is paramount, and our encry
 - **Easy-to-use CMS**: Manage your content efficiently with our user-friendly CMS.
 - **PKCS7 Encryption**: Secure your data with advanced PKCS7 signing, encrypting, decrypting, and signature-verifying capabilities.
 - **Diffie-Hellman's**: Secured using DH's key-exchange mechanism.
+- **Elliptic-Curve Diffie-Hellman (ECDH)**: ECDH provides higher security with shorter key lengths compared to ordinary DH. For instance, a 256-bit key in ECDH offers comparable security to a 3072-bit key in DH. This makes ECDH more efficient in terms of computational resources and communication bandwidth.
 - **Built-in Logging**: Comprehensive logging provided by Monolog.
 - **Exception Handling**: Robust error management to ensure smooth operation.
 
@@ -1830,6 +1833,78 @@ if ( $clientShareSecret === $serverSharedSecret ) {
 ```
 ## Secure Authentication
 Although DH key exchange by itself does not provide authentication, combining the shared secret with digital signatures or certificates can authenticate the parties involved. The shared secret ensures that only parties with knowledge of the corresponding private keys can derive the same secret.
+
+# Elliptic-Curve Diffie-Hellman (ECDH)
+
+```php
+$curve = $gobuy->generateRandomEllipticCurveParameters();
+```
+- This line calls the `generateRandomEllipticCurveParameters` method of the `$gobuy` object.
+- This method is expected to return the parameters of a randomly generated elliptic curve, which typically include the prime number `p`, coefficients `a` and `b`, base point `g` (with coordinates), order `n`, and cofactor `h`.
+
+```php
+list($alicePrivateKey, $alicePublicKey) = $gobuy->generateKeyPair($curve);
+```
+- This line calls the `generateKeyPair` method of the `$gobuy` object, passing the generated elliptic curve parameters.
+- The method returns a list containing two items: Alice's private key and Alice's public key.
+- The `list` function assigns the first item to `$alicePrivateKey` and the second item to `$alicePublicKey`.
+
+```php
+//Blade 
+@php
+list($bobPrivateKey, $bobPublicKey) = $gobuy->generateKeyPair($curve);
+@endphp
+
+//index.php
+list($bobPrivateKey, $bobPublicKey) = $gobuy->generateKeyPair($curve);
+
+```
+- Similar to the previous line, this generates a key pair for Bob.
+- Bob's private key is assigned to `$bobPrivateKey`, and Bob's public key is assigned to `$bobPublicKey`.
+
+```php
+$aliceSharedSecret = $gobuy->computeSharedSecret($alicePrivateKey, $bobPublicKey, $curve);
+```
+- This line calls the `computeSharedSecret` method of the `$gobuy` object.
+- It passes Alice's private key, Bob's public key, and the elliptic curve parameters to the method.
+- The method computes the shared secret from Alice's perspective using her private key and Bob's public key.
+- The resulting shared secret is assigned to `$aliceSharedSecret`.
+
+```php
+$bobSharedSecret = $gobuy->computeSharedSecret($bobPrivateKey, $alicePublicKey, $curve);
+```
+- Similarly, this line computes the shared secret from Bob's perspective using his private key and Alice's public key.
+- The resulting shared secret is assigned to `$bobSharedSecret`.
+
+```php
+if ($aliceSharedSecret[0] === $bobSharedSecret[0]) {
+    // Use secret here
+}
+```
+- This line checks if the first element of the shared secrets computed by Alice and Bob are equal.
+- In the context of elliptic-curve Diffie-Hellman (ECDH), the shared secrets should be identical if the computations are correct.
+- If the shared secrets match, the code inside the `if` block will execute, where you can safely use the shared secret for further cryptographic operations like encryption or key derivation.
+
+### Additional Details:
+
+- **Elliptic Curve Parameters (`$curve`)**:
+  - Typically include:
+    - `p`: The prime that defines the finite field.
+    - `a` and `b`: Coefficients of the elliptic curve equation.
+    - `g`: The base point (generator point) on the curve.
+    - `n`: The order of the base point.
+    - `h`: The cofactor.
+
+- **Key Pair Generation (`generateKeyPair`)**:
+  - A private key is a randomly selected integer within a certain range.
+  - The public key is a point on the elliptic curve obtained by multiplying the base point `g` by the private key.
+
+- **Shared Secret Computation (`computeSharedSecret`)**:
+  - Using ECDH, the shared secret is computed by multiplying the public key received from the other party by one's own private key.
+  - The resulting point on the curve (often the x-coordinate) is the shared secret, which both parties will arrive at independently but will be identical if the calculations are correct.
+
+In summary, these lines perform the essential steps of the ECDH key exchange protocol, involving generating elliptic curve parameters, generating key pairs for both parties, and computing shared secrets to ensure both parties have derived the same cryptographic key.
+
 
 # Certificate Info
 You may use the following at your convinience to fetch information about a particular certificate
