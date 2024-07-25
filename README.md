@@ -72,7 +72,7 @@ Encrypt with confidence, stay secure with our APIs. Your data's shield in transi
 
 
 
-# About app 
+# About Library
 
 Ensuring the safety of user data during transit is crucial in today's digital age, and our encryption APIs are designed to provide robust protection. By leveraging advanced encryption standards, we ensure that your data is transformed into a secure format that can only be decrypted by authorized parties. This not only protects the data from unauthorized access but also maintains its integrity throughout the transmission process. Users can count on our APIs to provide a seamless and secure encryption experience, making their applications more resilient against data breaches and cyber threats.
 
@@ -196,7 +196,7 @@ Call the below method to undo the above. This is symetrical - meaning that both 
 ```php
 $originalData = $gobuy->unveil( $veiled, $strongKey );
 ```
-Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. The threats out there were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount`, `$key` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
+Call `cipher` to have your data encrypted. Our output is quite robust since we have employed more advanced padding, and we give you the chance to select how many stages of encryption you want by adjusting the argument `$itrCount`. The higher this value, the stronger the encryption and harder for analysts to detect. Be careful of overhead as you increase the number count. `12` is the recommended value; unless you are certain your CPU or server can handle a higher value. The threats out there were brought to careful consideration as these encryption blocks were built. Your input is efficiently disguised for transit, in order to ensure safe delivery to the receiving side. If you do not supply `$itrCount` and `$padding` arguments, then we will internally. Ours are firm and recommended, unless you have a particular standard you plan to use.
 ```php
 
 $cipher = $gobuy->cipher( "Hello, world!!!!", $strongKey, $itrCount, $padding ); // The last two arguments are optional
@@ -206,7 +206,7 @@ On the receiving side just easily call the method `decipher()` to return back to
 ```php
   //Blade
 @php
-    $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last two are still optional.
+    $deciphered = $gobuy->decipher( $cipher, $strongKey, $padding ); // The last argument is optional.
 @endphp
 
 ```
@@ -553,7 +553,7 @@ list( $endEntityCert, $endEntityCertPath ) = $gobuy->signEndEntityCert( "path/to
                                   $days, $serial );
 
 ```
-For end entity's CSR, you may use the sender's CSR from the prompt above. The sender certificate will look something like below. This is a PEM format.
+For end entity's CSR, you may use the sender's CSR generated above. The sender certificate will look something like below. This is a PEM format.
 ```vbnet
 -----BEGIN CERTIFICATE-----
 MIID1DCCArygAwIBAgIEBiKpijANBgkqhkiG9w0BAQsFADCBnDELMAkGA1UEBhMC
@@ -1332,8 +1332,6 @@ class GoBuy extends GoBuyEncryption{
 This code sets up the necessary values and objects for a Diffie-Hellman key exchange within a Laravel Blade template, leveraging the custom `GoBuy` service and `DiffieHellman` encryption class.
 
 
-Sure, here is the provided HTML snippet explained in Markdown format:
-
 
 ### HTML Div Element for Diffie-Hellman Key Exchange Data
 
@@ -1787,7 +1785,7 @@ For the `$serverSharedSecret`, you should get:
 7480603217065611487812391300266927278132489371633944691283404075838398607516532"}
 
 ```
-If e verything goes well, you should have a secret.
+If verything goes well, you should have a secret.
 ```php
 if ( $clientShareSecret === $serverSharedSecret ) {
     // Use secret here.
