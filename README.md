@@ -767,7 +767,7 @@ throw new \Exception( "Signing failed: " . openssl_error_string() );
 
 
 ```
-Signed data will look something like below. This signature can still be detached from the main message to have the staying separately.
+Signed data will look something like below. This signature can still be detached from the main message to have them staying separately.
 ```vbnet
 MIME-Version: 1.0
 Content-Disposition: attachment; filename="smime.p7m"
