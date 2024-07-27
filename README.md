@@ -1754,7 +1754,7 @@ Call this to save server's private key in a secret temp file on your device. Thi
         $path = $gobuy->saveData( $privateKey ); // Call this to save server's private key.
 
         return response()->json(['publicKey' => $publicKey,  
-                                    'path' => bin2hex($gobuy->harden( $path ))
+                                    'path' => bin2hex($gobuy->harden( $path, $strongKey ))
                                 ]);
     }
 ```
@@ -1765,7 +1765,7 @@ Then after:
     public function computeSharedSecret(Request $request, GoBuyEncryption $gobuy )
     {
         $clientPublicKey = $request->input('clientPublicKey');
-        $path = $gobuy->ease(hex2bin($request->input('path')));
+        $path = $gobuy->ease(hex2bin($request->input('path')), $strongKey );
 
         $serverPrivateKey = $gobuy->getData( $path ); 
 
